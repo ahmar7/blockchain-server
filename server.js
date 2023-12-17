@@ -8,6 +8,7 @@ database();
 
 app.get("/", async (req, res) => {
   res.send("working");
+  console.log("working");
 });
 app.use(errorMiddleware);
 let server = app.listen(process.env.PORT, () => {
