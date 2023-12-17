@@ -7,8 +7,11 @@ const {
   allUser,
   singleUser,
   updateSingleUser,
+  verifySingleUser,
+  getsignUser,
 } = require("../controllers/userController");
 const { isAuthorizedUser, authorizedRoles } = require("../middlewares/auth");
+const singleUpload = require("../middlewares/multer");
 
 let router = express.Router();
 
@@ -24,6 +27,10 @@ router
 router
   .route("/updateSingleUser/:id")
   .post(isAuthorizedUser, authorizedRoles("admin"), updateSingleUser);
+router
+  .route("/verifySingleUser")
+  .patch(isAuthorizedUser, singleUpload, verifySingleUser);
 router.route("/password/reset").post(resetPassword);
+router.route("/getsignUser").patch(singleUpload, getsignUser);
 
 module.exports = router;

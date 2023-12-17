@@ -9,8 +9,7 @@ const cors = require("cors");
 app.use(express.json());
 let cookieParser = require("cookie-parser");
 app.use(cookieParser());
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(bodyparser.json());
+
 app.use(
   cors({
     origin: process.env.CORS,
@@ -19,6 +18,8 @@ app.use(
     exposedHeaders: ["Set-Cookie"],
   })
 );
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(bodyparser.json());
 // All Routes
 const coins = require("./routes/coinRoute");
 const user = require("./routes/userRoute");

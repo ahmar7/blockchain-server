@@ -1,6 +1,8 @@
 let UserModel = require("../models/userModel");
 // Usedto handle error
 const errorHandler = require("../utils/errorHandler");
+const cloudinary = require("cloudinary");
+const getDataUri = require("../utils/dataUri");
 
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const jwtToken = require("../utils/jwtToken");
@@ -109,6 +111,7 @@ exports.singleUser = catchAsyncErrors(async (req, res, next) => {
     signleUser,
   });
 });
+
 exports.updateSingleUser = catchAsyncErrors(async (req, res, next) => {
   let { id } = req.params;
   const {
@@ -147,6 +150,37 @@ exports.updateSingleUser = catchAsyncErrors(async (req, res, next) => {
   res.status(200).send({
     success: true,
     msg: "User updated successfully",
+    signleUser,
+  });
+});
+exports.getsignUser = catchAsyncErrors(async (req, res, next) => {
+  let { id } = req.body;
+  console.log("req.body: ", req.body);
+  let signleUser = await UserModel.findById({ _id: id });
+  res.status(200).send({
+    success: true,
+    msg: "Signle Users",
+    signleUser,
+  });
+});
+exports.verifySingleUser = catchAsyncErrors(async (req, res, next) => {
+  let { id } = req.body;
+  console.log("req.body: ", req.body);
+  console.log("id: ", id);
+
+  let signleUser = await UserModel.findByIdAndUpdate(
+    { _id: id },
+    {
+      status: "completed",
+    },
+    { new: true, upsert: true }
+  );
+  signleUser.save();
+  console.log("signleUser: ", signleUser);
+
+  res.status(200).send({
+    success: true,
+    msg: "Congratulations, you have been verified! ",
     signleUser,
   });
 });
