@@ -30,9 +30,17 @@ exports.getCoins = catchAsyncErrors(async (req, res, next) => {
     getCoin,
   });
 });
+exports.getUserCoin = catchAsyncErrors(async (req, res, next) => {
+  let { id } = req.params;
+  let getCoin = await userCoins.findOne({ user: id });
+  res.status(200).send({
+    success: true,
+    msg: "Done",
+    getCoin,
+  });
+});
 exports.getCoinsUser = catchAsyncErrors(async (req, res, next) => {
-  let { id } = req.body;
-  console.log("req.body: ", req.body);
+  let { id } = req.params; 
   let getCoin = await userCoins.findOne({ user: id });
   res.status(200).send({
     success: true,

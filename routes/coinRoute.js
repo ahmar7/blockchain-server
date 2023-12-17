@@ -10,6 +10,7 @@ const {
   getTransactions,
   getEachUser,
   getCoinsUser,
+  getUserCoin,
 } = require("../controllers/coinsController");
 
 let router = express.Router();
@@ -23,8 +24,9 @@ router
 router
   .route("/getCoins/:id")
   .get(isAuthorizedUser, authorizedRoles("admin"), getCoins);
+router.route("/getUserCoin/:id").get(isAuthorizedUser, getUserCoin);
 
-router.route("/getCoinsUser").get(isAuthorizedUser, getCoinsUser);
+router.route("/getCoinsUser/:id").get(isAuthorizedUser, getCoinsUser);
 router
   .route("/createTransaction/:id")
   .patch(isAuthorizedUser, authorizedRoles("admin"), createTransaction);
