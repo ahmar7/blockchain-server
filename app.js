@@ -16,6 +16,7 @@ app.use(
     origin: process.env.CORS,
 
     credentials: true,
+    exposedHeaders: ["Set-Cookie"],
   })
 );
 // All Routes
