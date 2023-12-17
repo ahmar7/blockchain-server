@@ -6,6 +6,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const database = require("./config/database");
 database();
 
+app.get("/", async (req, res) => {
+  res.send("working");
+});
 app.use(errorMiddleware);
 let server = app.listen(process.env.PORT, () => {
   console.log(`server is running at ${process.env.PORT}`);
