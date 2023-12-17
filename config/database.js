@@ -7,6 +7,9 @@ const database = () => {
     )
     .then((data) => {
       console.log(`Db connected successfully with ${data.connection.host}`);
+    })
+    .catch((e) => {
+      console.log("db error", e);
     });
 };
 
