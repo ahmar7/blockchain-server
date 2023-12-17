@@ -10,8 +10,7 @@ let cookieParser = require("cookie-parser");
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://blockchain-frontend-one.vercel.app",
-    methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
+    origin: process.env.CORS,
 
     credentials: true,
   })

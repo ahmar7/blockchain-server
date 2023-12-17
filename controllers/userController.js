@@ -18,14 +18,14 @@ exports.RegisterUser = catchAsyncErrors(async (req, res, next) => {
     postalCode,
     role,
   } = req.body;
-  let findUser = await UserModel.findOne({
-    email: req.body.email,
-  });
-  if (findUser) {
-    return next(
-      new errorHandler("Email  already exists, please sign in to continue", 500)
-    );
-  }
+  // let findUser = await UserModel.findOne({
+  //   email: req.body.email,
+  // });
+  // if (findUser) {
+  //   return next(
+  //     new errorHandler("Email  already exists, please sign in to continue", 500)
+  //   );
+  // }
   if (
     !firstName ||
     !lastName ||
