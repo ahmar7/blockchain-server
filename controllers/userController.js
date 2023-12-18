@@ -63,7 +63,7 @@ exports.RegisterUser = catchAsyncErrors(async (req, res, next) => {
     userId: createUser._id,
     token: crypto.randomBytes(32).toString("hex"),
   }).save();
-  const url = `${process.env.BASE_URL}users/${createUser._id}/verify/${token.token}}`;
+  const url = `${process.env.BASE_URL}/users/${createUser._id}/verify/${token.token}`;
   await sendEmail(createUser.email, "Verify Email", url);
   res.status(201).send({
     msg: "A verification link has been sent to your email, please verify",
