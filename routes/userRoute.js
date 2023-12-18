@@ -9,6 +9,7 @@ const {
   updateSingleUser,
   verifySingleUser,
   getsignUser,
+  verifyToken,
 } = require("../controllers/userController");
 const { isAuthorizedUser, authorizedRoles } = require("../middlewares/auth");
 const singleUpload = require("../middlewares/multer");
@@ -32,5 +33,6 @@ router
   .patch(isAuthorizedUser, singleUpload, verifySingleUser);
 router.route("/password/reset").post(resetPassword);
 router.route("/getsignUser").patch(singleUpload, getsignUser);
+router.route("/:id/verify/:token").get(verifyToken);
 
 module.exports = router;

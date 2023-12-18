@@ -7,6 +7,9 @@ const getDataUri = require("../utils/dataUri");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const jwtToken = require("../utils/jwtToken");
 
+const crypto = require("crypto");
+const Token = require("../models/token");
+const sendEmail = require("../utils/sendEmail");
 exports.RegisterUser = catchAsyncErrors(async (req, res, next) => {
   const {
     firstName,
@@ -20,14 +23,6 @@ exports.RegisterUser = catchAsyncErrors(async (req, res, next) => {
     postalCode,
     role,
   } = req.body;
-  let findUser = await UserModel.findOne({
-    email: req.body.email,
-  });
-  if (findUser) {
-    return next(
-      new errorHandler("Email  already exists, please sign in to continue", 500)
-    );
-  }
   if (
     !firstName ||
     !lastName ||
@@ -41,6 +36,16 @@ exports.RegisterUser = catchAsyncErrors(async (req, res, next) => {
   ) {
     return next(new errorHandler("Please fill all the required fields", 500));
   }
+  let findUser = await UserModel.findOne({
+    email: req.body.email,
+  });
+  if (findUser) {
+    return next(
+      new errorHandler("Email  already exists, please sign in to continue", 500)
+    );
+  }
+  email.toLowerCase();
+
   let createUser = await UserModel.create({
     firstName,
     lastName,
@@ -54,11 +59,42 @@ exports.RegisterUser = catchAsyncErrors(async (req, res, next) => {
     postalCode,
     role,
   });
-  // let userCoins = await userCoins.create({
-  //   user: createUser._id,
-  // });
-  // A simple function, follow function path to read description
-  jwtToken(createUser, 201, res);
+  const token = await new Token({
+    userId: createUser._id,
+    token: crypto.randomBytes(32).toString("hex"),
+  }).save();
+  const url = `${process.env.BASE_URL}users/${createUser._id}/verify/${token.token}}`;
+  await sendEmail(createUser.email, "Verify Email", url);
+  res.status(201).send({
+    msg: "A verification link has been sent to your email, please verify",
+    success: true,
+  });
+  // jwtToken(createUser, 201, res);
+});
+exports.verifyToken = catchAsyncErrors(async (req, res, next) => {
+  console.log(req.body);
+  console.log(req.params);
+  const user = await UserModel.findOne({ _id: req.params.id });
+  if (!user) {
+    return next(new errorHandler("Invalid link", 400));
+  }
+
+  const token = await Token.findOne({
+    userId: user._id,
+    token: req.params.token,
+  });
+  if (!token) {
+    return next(new errorHandler("link expired", 400));
+  }
+
+  await UserModel.updateOne(
+    { _id: user._id },
+    { verified: true },
+    { upsert: true, new: true }
+  );
+  await token.deleteOne();
+
+  res.status(200).send({ msg: "Email verified successfully", success: true });
 });
 
 exports.loginUser = catchAsyncErrors(async (req, res, next) => {
@@ -75,6 +111,32 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
 
   if (UserAuth.password != password) {
     return next(new errorHandler("Invalid Email or Password"));
+  }
+  if (!UserAuth.verified) {
+    console.log("unverified");
+    let token = await Token.findOne({ userId: UserAuth._id });
+    if (!token) {
+      console.log("no token");
+
+      token = await new Token({
+        userId: UserAuth._id,
+        token: crypto.randomBytes(32).toString("hex"),
+      }).save();
+      const url = `${process.env.BASE_URL}/users/${UserAuth._id}/verify/${token.token}`;
+      await sendEmail(UserAuth.email, "Verify Email", url);
+    } else if (token) {
+      return res.status(400).send({
+        success: false,
+
+        msg: "A verification link has been already been sent to your email, please try again after 1 minute",
+      });
+    }
+
+    return res.status(400).send({
+      success: false,
+
+      msg: "A verification link has been sent to your email, please verify",
+    });
   }
   // A simple function, follow function path to read description
 
