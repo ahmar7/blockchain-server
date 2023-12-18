@@ -18,7 +18,7 @@ module.exports = async (email, subject, text) => {
       to: email,
       subject: `Email Verification link`,
       text: ` 
-To activate this account, please click the following link: 
+To activate your account, please click the following link: 
 
 ${text}
 
