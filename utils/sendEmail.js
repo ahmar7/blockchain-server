@@ -22,7 +22,7 @@ To activate this account, please click the following link:
 
 ${text}
 
-The link will be expired after 1 minute
+The link will be expired after 5 minutes
 `,
     });
     console.log("email sent successfully", transporter, data);
