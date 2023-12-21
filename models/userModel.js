@@ -91,6 +91,10 @@ let userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  kyc: {
+    type: Boolean,
+    default: false,
+  },
 
   resetPasswordToken: String,
   resetPasswordExpire: Date,
