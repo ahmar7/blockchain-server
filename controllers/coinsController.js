@@ -40,7 +40,7 @@ exports.getUserCoin = catchAsyncErrors(async (req, res, next) => {
   });
 });
 exports.getCoinsUser = catchAsyncErrors(async (req, res, next) => {
-  let { id } = req.params; 
+  let { id } = req.params;
   let getCoin = await userCoins.findOne({ user: id });
   res.status(200).send({
     success: true,
@@ -130,6 +130,23 @@ exports.getEachUser = catchAsyncErrors(async (req, res, next) => {
       signleUser,
     });
   }
+});
+exports.deleteEachUser = catchAsyncErrors(async (req, res, next) => {
+  let { id } = req.params;
+  let getCoin = await userCoins.findOneAndDelete({ user: id });
+  let signleUser = await userModel.findByIdAndDelete({ _id: id });
+
+  if (!signleUser) {
+    res.status(200).send({
+      success: false,
+      msg: "User not found or already has been deleted",
+    });
+  }
+  res.status(200).send({
+    success: true,
+    msg: "User has been deleted successfully",
+    // getCoin,
+  });
 });
 
 exports.updateTransaction = catchAsyncErrors(async (req, res, next) => {

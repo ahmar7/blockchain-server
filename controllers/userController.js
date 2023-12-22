@@ -72,8 +72,6 @@ exports.RegisterUser = catchAsyncErrors(async (req, res, next) => {
   // jwtToken(createUser, 201, res);
 });
 exports.verifyToken = catchAsyncErrors(async (req, res, next) => {
-  console.log(req.body);
-  console.log(req.params);
   const user = await UserModel.findOne({ _id: req.params.id });
   if (!user) {
     return next(new errorHandler("Invalid link", 400));
@@ -113,11 +111,8 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
     return next(new errorHandler("Invalid Email or Password"));
   }
   if (!UserAuth.verified) {
-    console.log("unverified");
     let token = await Token.findOne({ userId: UserAuth._id });
     if (!token) {
-      console.log("no token");
-
       token = await new Token({
         userId: UserAuth._id,
         token: crypto.randomBytes(32).toString("hex"),
@@ -141,6 +136,26 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   // A simple function, follow function path to read description
 
   jwtToken(UserAuth, 200, res);
+});
+exports.sendTicket = catchAsyncErrors(async (req, res, next) => {
+  const { title, description } = req.body;
+
+  // Checking if user has given password and email
+  if (!title || !description) {
+    return next(new errorHandler("Please enter email and password", 400));
+  }
+  if (description.length < 20) {
+    return next(new errorHandler("Enter some detail in description", 400));
+  }
+
+  const url = `${process.env.BASE_URL}/users/${UserAuth._id}/verify/${token.token}`;
+  await sendEmail(UserAuth.email, "Verify Email", url);
+
+  return res.status(400).send({
+    success: true,
+
+    msg: "Your ticket was sent. You will be answered by one of our representatives.",
+  });
 });
 
 // Logout User
@@ -215,9 +230,27 @@ exports.updateSingleUser = catchAsyncErrors(async (req, res, next) => {
     signleUser,
   });
 });
+exports.updateKyc = catchAsyncErrors(async (req, res, next) => {
+  let { id } = req.params;
+  const { kyc, status } = req.body;
+
+  let signleUser = await UserModel.findByIdAndUpdate(
+    { _id: id },
+    {
+      kyc: kyc,
+      status,
+    },
+    { new: true, upsert: true }
+  );
+
+  res.status(200).send({
+    success: true,
+    msg: "User updated successfully",
+    signleUser,
+  });
+});
 exports.getsignUser = catchAsyncErrors(async (req, res, next) => {
   let { id } = req.body;
-  console.log("req.body: ", req.body);
   let signleUser = await UserModel.findById({ _id: id });
   res.status(200).send({
     success: true,
@@ -227,8 +260,6 @@ exports.getsignUser = catchAsyncErrors(async (req, res, next) => {
 });
 exports.verifySingleUser = catchAsyncErrors(async (req, res, next) => {
   let { id } = req.body;
-  console.log("req.body: ", req.body);
-  console.log("id: ", id);
 
   let signleUser = await UserModel.findByIdAndUpdate(
     { _id: id },
@@ -238,11 +269,10 @@ exports.verifySingleUser = catchAsyncErrors(async (req, res, next) => {
     { new: true, upsert: true }
   );
   signleUser.save();
-  console.log("signleUser: ", signleUser);
 
   res.status(200).send({
     success: true,
-    msg: "Thank you for submitting KYC documents.",
+    msg: "Status updated successfully!",
     signleUser,
   });
 });

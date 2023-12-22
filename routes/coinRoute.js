@@ -11,6 +11,7 @@ const {
   getEachUser,
   getCoinsUser,
   getUserCoin,
+  deleteEachUser,
 } = require("../controllers/coinsController");
 
 let router = express.Router();
@@ -39,5 +40,8 @@ router
 router
   .route("/getEachUser/:id")
   .get(isAuthorizedUser, authorizedRoles("admin"), getEachUser);
+router
+  .route("/deleteEachUser/:id")
+  .delete(isAuthorizedUser, authorizedRoles("admin"), deleteEachUser);
 
 module.exports = router;

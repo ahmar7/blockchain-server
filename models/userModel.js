@@ -86,6 +86,7 @@ let userSchema = new mongoose.Schema({
   status: {
     type: String,
     default: "pending",
+    trim: true,
   },
   verified: {
     type: Boolean,
