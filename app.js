@@ -9,15 +9,38 @@ const cors = require("cors");
 app.use(express.json());
 let cookieParser = require("cookie-parser");
 app.use(cookieParser());
+//
+let ALLOWED_ORIGINS = [
+  "https://blockchain-frontend-one.vercel.app",
+  "https://blockchainsltd.com",
+  "https://www.blockchainsltd.com",
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:3002",
+  "http://localhost:3003",
+];
+app.use((req, res, next) => {
+  let origin = req.headers.origin;
+  let theOrigin =
+    ALLOWED_ORIGINS.indexOf(origin) >= 0 ? origin : ALLOWED_ORIGINS[0];
+  res.header("Access-Control-Allow-Origin", theOrigin);
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
 
-app.use(
-  cors({
-    origin: process.env.CORS,
+  res.header("Access-Control-Allow-Credentials", true);
+  next();
+});
+//
+// app.use(
+//   cors({
+//     origin: process.env.CORS,
 
-    credentials: true,
-    exposedHeaders: ["Set-Cookie"],
-  })
-);
+//     credentials: true,
+//     exposedHeaders: ["Set-Cookie"],
+//   })
+// );
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 // All Routes
