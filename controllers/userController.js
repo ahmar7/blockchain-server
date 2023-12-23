@@ -133,7 +133,6 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
       msg: "A verification link has been sent to your email, please verify",
     });
   }
-  // A simple function, follow function path to read description
 
   jwtToken(UserAuth, 200, res);
 });
