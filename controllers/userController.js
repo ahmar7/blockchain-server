@@ -108,7 +108,11 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   }
   let UserAuth = await UserModel.findOne({ email });
   if (!UserAuth) {
-    return next(new errorHandler("Invalid Email or password"));
+    return next(
+      new errorHandler(
+        "User not found with this email address, please register first!"
+      )
+    );
   }
 
   if (UserAuth.password != password) {
