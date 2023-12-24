@@ -21,7 +21,7 @@ exports.RegisterUser = catchAsyncErrors(async (req, res, next) => {
     city,
     country,
     postalCode,
-    role,
+    // role,
   } = req.body;
   if (
     !firstName ||
@@ -57,14 +57,18 @@ exports.RegisterUser = catchAsyncErrors(async (req, res, next) => {
     note: "",
     country,
     postalCode,
-    role,
   });
   const token = await new Token({
     userId: createUser._id,
     token: crypto.randomBytes(32).toString("hex"),
   }).save();
+  let subject = `Email Verification link`;
   const url = `${process.env.BASE_URL}/users/${createUser._id}/verify/${token.token}`;
-  await sendEmail(createUser.email, "Verify Email", url);
+  let text = `To activate your account, please click the following link: 
+
+${url}
+The link will be expired after 5 minutes`;
+  await sendEmail(createUser.email, subject, text);
   res.status(201).send({
     msg: "A verification link has been sent to your email, please verify",
     success: true,
@@ -117,8 +121,17 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
         userId: UserAuth._id,
         token: crypto.randomBytes(32).toString("hex"),
       }).save();
+
+      //
+      let subject = `Email Verification link`;
       const url = `${process.env.BASE_URL}/users/${UserAuth._id}/verify/${token.token}`;
-      await sendEmail(UserAuth.email, "Verify Email", url);
+      let text = `To activate your account, please click the following link: 
+
+${url}
+
+The link will be expired after 5 minutes`;
+      await sendEmail(UserAuth.email, subject, text);
+      //
     } else if (token) {
       return res.status(400).send({
         success: false,
@@ -137,20 +150,33 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   jwtToken(UserAuth, 200, res);
 });
 exports.sendTicket = catchAsyncErrors(async (req, res, next) => {
-  const { title, description } = req.body;
-
+  const { title, description, id } = req.body;
+  let _id = id;
   // Checking if user has given password and email
   if (!title || !description) {
-    return next(new errorHandler("Please enter email and password", 400));
+    return next(new errorHandler("Please fill both the requrired fields", 500));
   }
   if (description.length < 20) {
-    return next(new errorHandler("Enter some detail in description", 400));
+    return next(new errorHandler("Enter some detail in description", 500));
   }
+  let userEmail = await UserModel.findById(_id);
 
-  const url = `${process.env.BASE_URL}/users/${UserAuth._id}/verify/${token.token}`;
-  await sendEmail(UserAuth.email, "Verify Email", url);
+  let newTitle = `Blochain user ticket`;
+  let newDescription = `
+From:
+${userEmail.firstName}
+${userEmail.email}
 
-  return res.status(400).send({
+
+Ticket Title: 
+${title}
+
+Ticket Description:
+${description}`;
+
+  await sendEmail(process.env.USER, newTitle, newDescription);
+
+  return res.status(200).send({
     success: true,
 
     msg: "Your ticket was sent. You will be answered by one of our representatives.",

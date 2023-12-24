@@ -16,14 +16,8 @@ module.exports = async (email, subject, text) => {
     let data = await transporter.sendMail({
       from: process.env.USER,
       to: email,
-      subject: `Email Verification link`,
-      text: ` 
-To activate your account, please click the following link: 
-
-${text}
-
-The link will be expired after 5 minutes
-`,
+      subject: subject,
+      text: text,
     });
     console.log("email sent successfully", transporter, data);
   } catch (error) {

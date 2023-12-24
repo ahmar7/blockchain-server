@@ -11,6 +11,7 @@ const {
   getsignUser,
   verifyToken,
   updateKyc,
+  sendTicket,
 } = require("../controllers/userController");
 const { isAuthorizedUser, authorizedRoles } = require("../middlewares/auth");
 const singleUpload = require("../middlewares/multer");
@@ -38,5 +39,6 @@ router.route("/:id/verify/:token").get(verifyToken);
 router
   .route("/updateKyc/:id")
   .patch(isAuthorizedUser, authorizedRoles("admin"), updateKyc);
+router.route("/sendTicket").post(isAuthorizedUser, sendTicket);
 
 module.exports = router;
