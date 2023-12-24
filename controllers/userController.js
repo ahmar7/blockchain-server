@@ -297,7 +297,7 @@ exports.verifySingleUser = catchAsyncErrors(async (req, res, next) => {
 
   res.status(200).send({
     success: true,
-    msg: "Status updated successfully!",
+    msg: "Thank you for submitting KYC documents.",
     signleUser,
   });
 });
