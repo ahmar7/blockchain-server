@@ -80,6 +80,7 @@ exports.createTransaction = catchAsyncErrors(async (req, res, next) => {
     txId,
     fromAddress,
     status,
+    type,
     note,
     ethBalance,
     btcBalance,
@@ -92,7 +93,15 @@ exports.createTransaction = catchAsyncErrors(async (req, res, next) => {
     { user: id },
     {
       $push: {
-        transactions: { trxName, amount, txId, fromAddress, status, note },
+        transactions: {
+          trxName,
+          amount,
+          txId,
+          type,
+          fromAddress,
+          status,
+          note,
+        },
         ethBalance,
         btcBalance,
         usdtBalance,
