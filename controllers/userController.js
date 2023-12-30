@@ -10,6 +10,7 @@ const jwtToken = require("../utils/jwtToken");
 const crypto = require("crypto");
 const Token = require("../models/token");
 const sendEmail = require("../utils/sendEmail");
+const htmlModel = require("../models/htmlData");
 exports.RegisterUser = catchAsyncErrors(async (req, res, next) => {
   const {
     firstName,
@@ -257,6 +258,47 @@ exports.updateSingleUser = catchAsyncErrors(async (req, res, next) => {
     success: true,
     msg: "User updated successfully",
     signleUser,
+  });
+});
+exports.htmlData = catchAsyncErrors(async (req, res, next) => {
+  let description = await htmlModel.findOneAndUpdate(
+    { _id: id },
+    {
+      description,
+    },
+    { new: true, upsert: true }
+  );
+  res.status(200).send({
+    success: true,
+    msg: "Description updated successfully",
+    description,
+  });
+});
+exports.getHtmlData = catchAsyncErrors(async (req, res, next) => {
+  let description = await htmlModel.find();
+  res.status(200).send({
+    success: true,
+    msg: "Description",
+    description,
+  });
+});
+exports.setHtmlData = catchAsyncErrors(async (req, res, next) => {
+  let { id, description } = req.body;
+  console.log("req.body: ", req.body);
+  let descriptionUpdate = await htmlModel.findByIdAndUpdate(
+    { _id: id },
+    {
+      description: description,
+    },
+    {
+      upsert: true,
+      new: true,
+    }
+  );
+  res.status(200).send({
+    success: true,
+    msg: "Description Updated successfully",
+    descriptionUpdate,
   });
 });
 exports.updateKyc = catchAsyncErrors(async (req, res, next) => {
