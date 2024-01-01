@@ -83,10 +83,22 @@ let userSchema = new mongoose.Schema({
     type: String,
     default: "user",
   },
-  status: {
-    type: String,
-    default: "pending",
-    trim: true,
+  submitDoc: {
+    status: {
+      type: String,
+      enum: ["pending", "completed"],
+      default: "pending",
+      trim: true,
+      required: true,
+    },
+    bill: {
+      type: String,
+      required: true,
+    },
+    cnic: {
+      type: String,
+      required: true,
+    },
   },
   verified: {
     type: Boolean,

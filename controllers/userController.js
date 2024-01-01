@@ -304,12 +304,15 @@ exports.setHtmlData = catchAsyncErrors(async (req, res, next) => {
 exports.updateKyc = catchAsyncErrors(async (req, res, next) => {
   let { id } = req.params;
   const { kyc, status } = req.body;
+  console.log("status: ", status);
 
   let signleUser = await UserModel.findByIdAndUpdate(
     { _id: id },
     {
       kyc: kyc,
-      status,
+      submitDoc: {
+        status: status,
+      },
     },
     { new: true, upsert: true }
   );
@@ -330,12 +333,16 @@ exports.getsignUser = catchAsyncErrors(async (req, res, next) => {
   });
 });
 exports.verifySingleUser = catchAsyncErrors(async (req, res, next) => {
-  let { id } = req.body;
+  let { id, cnic, bill } = req.body;
 
   let signleUser = await UserModel.findByIdAndUpdate(
     { _id: id },
     {
-      status: "completed",
+      submitDoc: {
+        status: "completed",
+        cnic: cnic,
+        bill: bill,
+      },
     },
     { new: true, upsert: true }
   );
