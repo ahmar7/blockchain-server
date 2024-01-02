@@ -2,8 +2,10 @@
 const jwtToken = (user, statusCode, res) => {
   let token = user.generateToken();
   let options = {
-    // expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-    maxAge: process.env.TOKEN_EXPIRE * 24 * 60 * 60,
+    expires: new Date(
+      Date.now() + process.env.TOKEN_EXPIRE * 24 * 60 * 60 * 1000
+    ),
+    // maxAge: 3 * 24 * 60 * 60,
     httpOnly: true,
     sameSite: "None",
     secure: true,

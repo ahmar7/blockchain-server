@@ -93,11 +93,9 @@ let userSchema = new mongoose.Schema({
     },
     bill: {
       type: String,
-      required: true,
     },
     cnic: {
       type: String,
-      required: true,
     },
   },
   verified: {
