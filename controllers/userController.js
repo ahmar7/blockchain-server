@@ -144,7 +144,7 @@ The link will be expired after 2 minutes`;
       return res.status(400).send({
         success: false,
 
-        msg: "A verification link has been already been sent to your email, please try again after 2 minutes",
+        msg: "A verification link has been already been sent to your email, please try again after 15 minutes",
       });
     }
 
