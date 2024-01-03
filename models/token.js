@@ -15,5 +15,5 @@ const tokenSchema = new Schema({
   },
 });
 
-tokenSchema.index({ createdAt: 1 }, { expireAfterSeconds: 120 });
+tokenSchema.index({ createdAt: 1 }, { expireAfterSeconds: 900 });
 module.exports = mongoose.model("token", tokenSchema);

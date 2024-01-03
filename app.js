@@ -6,7 +6,7 @@ const cron = require("node-cron");
 cron.schedule("* * * * *", async () => {
   try {
     const result = await TokenModel.deleteMany({
-      createdAt: { $lt: new Date(Date.now() - 120 * 1000) },
+      createdAt: { $lt: new Date(Date.now() - 900 * 1000) },
     });
   } catch (error) {
     console.error("Error in cleanup job:", error);
