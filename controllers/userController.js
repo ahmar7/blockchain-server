@@ -137,7 +137,7 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
 
 ${url}
 
-The link will be expired after 2 minutes`;
+The link will be expired after 15 minutes`;
       await sendEmail(UserAuth.email, subject, text);
       //
     } else if (token) {
