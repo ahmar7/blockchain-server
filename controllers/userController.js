@@ -68,7 +68,7 @@ exports.RegisterUser = catchAsyncErrors(async (req, res, next) => {
   let text = `To activate your account, please click the following link: 
 
 ${url}
-The link will be expired after 5 minutes`;
+The link will be expired after 15 minutes`;
   await sendEmail(createUser.email, subject, text);
   res.status(201).send({
     msg: "A verification link has been sent to your email, please verify",
