@@ -1,4 +1,5 @@
 const app = require("./app");
+
 var bodyParser = require("body-parser");
 const { errorMiddleware } = require("./middlewares/errorMiddleware");
 // Database connect

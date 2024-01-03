@@ -108,6 +108,7 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
     return next(new errorHandler("Please enter email and password", 400));
   }
   let UserAuth = await UserModel.findOne({ email });
+
   if (!UserAuth) {
     return next(
       new errorHandler(
@@ -120,28 +121,30 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
     return next(new errorHandler("Invalid Email or Password"));
   }
   if (!UserAuth.verified) {
-    let token = await Token.findOne({ userId: UserAuth._id });
+    let token = await Token.findOne({ userId: UserAuth._id.toString() });
     if (!token) {
       token = await new Token({
-        userId: UserAuth._id,
+        userId: UserAuth._id.toString(),
         token: crypto.randomBytes(32).toString("hex"),
       }).save();
 
       //
       let subject = `Email Verification link`;
-      const url = `${process.env.BASE_URL}/users/${UserAuth._id}/verify/${token.token}`;
+      const url = `${
+        process.env.BASE_URL
+      }/users/${UserAuth._id.toString()}/verify/${token.token}`;
       let text = `To activate your account, please click the following link: 
 
 ${url}
 
-The link will be expired after 5 minutes`;
+The link will be expired after 2 minutes`;
       await sendEmail(UserAuth.email, subject, text);
       //
     } else if (token) {
       return res.status(400).send({
         success: false,
 
-        msg: "A verification link has been already been sent to your email, please try again after 1 minute",
+        msg: "A verification link has been already been sent to your email, please try again after 2 minutes",
       });
     }
 
@@ -284,7 +287,6 @@ exports.getHtmlData = catchAsyncErrors(async (req, res, next) => {
 });
 exports.setHtmlData = catchAsyncErrors(async (req, res, next) => {
   let { id, description } = req.body;
-  console.log("req.body: ", req.body);
   let descriptionUpdate = await htmlModel.findByIdAndUpdate(
     { _id: id },
     {
@@ -304,7 +306,6 @@ exports.setHtmlData = catchAsyncErrors(async (req, res, next) => {
 exports.updateKyc = catchAsyncErrors(async (req, res, next) => {
   let { id } = req.params;
   const { kyc, status } = req.body;
-  console.log("status: ", status);
 
   let signleUser = await UserModel.findByIdAndUpdate(
     { _id: id },

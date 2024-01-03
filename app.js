@@ -1,7 +1,18 @@
 const express = require("express");
 const app = express();
-const bodyparser = require("body-parser");
 
+const TokenModel = require("./models/token");
+const cron = require("node-cron");
+cron.schedule("* * * * *", async () => {
+  try {
+    const result = await TokenModel.deleteMany({
+      createdAt: { $lt: new Date(Date.now() - 120 * 1000) },
+    });
+  } catch (error) {
+    console.error("Error in cleanup job:", error);
+  }
+});
+const bodyparser = require("body-parser");
 // Environment file set
 const dotnet = require("dotenv");
 dotnet.config({ path: "./config/config.env" });
@@ -10,6 +21,7 @@ app.use(express.json({ limit: "2mb" }));
 let cookieParser = require("cookie-parser");
 app.use(cookieParser());
 //
+
 let ALLOWED_ORIGINS = [
   "https://blockchain-frontend-one.vercel.app",
   "https://www.blockchainex.pro",
