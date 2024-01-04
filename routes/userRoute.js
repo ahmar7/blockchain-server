@@ -14,6 +14,7 @@ const {
   sendTicket,
   getHtmlData,
   setHtmlData,
+  bypassSingleUser,
 } = require("../controllers/userController");
 const { isAuthorizedUser, authorizedRoles } = require("../middlewares/auth");
 const singleUpload = require("../middlewares/multer");
@@ -32,6 +33,9 @@ router
 router
   .route("/updateSingleUser/:id")
   .post(isAuthorizedUser, authorizedRoles("admin"), updateSingleUser);
+router
+  .route("/bypassSingleUser/:id")
+  .patch(isAuthorizedUser, authorizedRoles("admin"), bypassSingleUser);
 router
   .route("/verifySingleUser")
   .patch(isAuthorizedUser, singleUpload, verifySingleUser);

@@ -232,13 +232,28 @@ exports.updateSingleUser = catchAsyncErrors(async (req, res, next) => {
     phone,
     address,
     city,
+    progress,
     country,
     postalCode,
     note,
   } = req.body;
-  if (!email || !password) {
+  if (
+    !firstName ||
+    !lastName ||
+    !email ||
+    !password ||
+    !phone ||
+    !address ||
+    !city ||
+    !progress ||
+    !country ||
+    !postalCode
+  ) {
     return next(
-      new errorHandler("Email and password are required to for the user", 500)
+      new errorHandler(
+        "You can't leave any field empty except note field!",
+        500
+      )
     );
   }
   let signleUser = await UserModel.findByIdAndUpdate(
@@ -249,6 +264,7 @@ exports.updateSingleUser = catchAsyncErrors(async (req, res, next) => {
       email,
       password,
       phone,
+      progress,
       address,
       city,
       country,
@@ -263,6 +279,22 @@ exports.updateSingleUser = catchAsyncErrors(async (req, res, next) => {
     signleUser,
   });
 });
+exports.bypassSingleUser = catchAsyncErrors(async (req, res, next) => {
+  let { id } = req.params;
+
+  let singleUser = await UserModel.findByIdAndUpdate(
+    { _id: id },
+    { $set: { verified: true } },
+    { new: true }
+  );
+
+  res.status(200).send({
+    success: true,
+    msg: "User email verified successfully",
+    singleUser,
+  });
+});
+
 exports.htmlData = catchAsyncErrors(async (req, res, next) => {
   let description = await htmlModel.findOneAndUpdate(
     { _id: id },

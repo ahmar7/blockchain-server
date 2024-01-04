@@ -30,6 +30,12 @@ let userSchema = new mongoose.Schema({
     required: [true, "Please enter your Number"],
     trim: true,
   },
+  progress: {
+    type: Number,
+    min: 0,
+    max: 100,
+    default: 0,
+  },
   password: {
     type: String,
     required: [true, "Please enter your Password"],
