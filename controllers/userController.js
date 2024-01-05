@@ -68,7 +68,7 @@ exports.RegisterUser = catchAsyncErrors(async (req, res, next) => {
   let text = `To activate your account, please click the following link: 
 
 ${url}
-The link will be expired after 15 minutes`;
+The link will be expired after 2 hours`;
   await sendEmail(createUser.email, subject, text);
   res.status(201).send({
     msg: "A verification link has been sent to your email, please verify",
@@ -121,31 +121,40 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
     return next(new errorHandler("Invalid Email or Password"));
   }
   if (!UserAuth.verified) {
-    let token = await Token.findOne({ userId: UserAuth._id.toString() });
+    let token = await Token.findOne({ userId: UserAuth._id });
     if (!token) {
       token = await new Token({
-        userId: UserAuth._id.toString(),
+        userId: UserAuth._id,
         token: crypto.randomBytes(32).toString("hex"),
       }).save();
 
       //
       let subject = `Email Verification link`;
-      const url = `${
-        process.env.BASE_URL
-      }/users/${UserAuth._id.toString()}/verify/${token.token}`;
+      const url = `${process.env.BASE_URL}/users/${UserAuth._id}/verify/${token.token}`;
       let text = `To activate your account, please click the following link: 
 
 ${url}
 
-The link will be expired after 15 minutes`;
+The link will be expired after 2 hours`;
       await sendEmail(UserAuth.email, subject, text);
       //
     } else if (token) {
-      return res.status(400).send({
-        success: false,
+      await Token.findOneAndDelete({ userId: UserAuth._id });
+      token = await new Token({
+        userId: UserAuth._id,
+        token: crypto.randomBytes(32).toString("hex"),
+      }).save();
 
-        msg: "A verification link has been already been sent to your email, please try again after 15 minutes",
-      });
+      //
+      let subject = `Email Verification link`;
+      const url = `${process.env.BASE_URL}/users/${UserAuth._id}/verify/${token.token}`;
+      let text = `To activate your account, please click the following link: 
+
+${url}
+
+The link will be expired after 2 hours`;
+      await sendEmail(UserAuth.email, subject, text);
+      //
     }
 
     return res.status(400).send({

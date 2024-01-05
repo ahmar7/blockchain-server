@@ -1,17 +1,6 @@
 const express = require("express");
 const app = express();
 
-const TokenModel = require("./models/token");
-const cron = require("node-cron");
-cron.schedule("* * * * *", async () => {
-  try {
-    const result = await TokenModel.deleteMany({
-      createdAt: { $lt: new Date(Date.now() - 900 * 1000) },
-    });
-  } catch (error) {
-    console.error("Error in cleanup job:", error);
-  }
-});
 const bodyparser = require("body-parser");
 // Environment file set
 const dotnet = require("dotenv");
