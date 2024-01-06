@@ -254,7 +254,6 @@ exports.updateSingleUser = catchAsyncErrors(async (req, res, next) => {
     !phone ||
     !address ||
     !city ||
-    !progress ||
     !country ||
     !postalCode
   ) {

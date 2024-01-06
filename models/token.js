@@ -12,7 +12,7 @@ const tokenSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    index: { expires: "4h" },
+    index: { expires: "2h" },
   },
 });
 
