@@ -15,6 +15,7 @@ const {
   getHtmlData,
   setHtmlData,
   bypassSingleUser,
+  sendEmailCode,
 } = require("../controllers/userController");
 const { isAuthorizedUser, authorizedRoles } = require("../middlewares/auth");
 const singleUpload = require("../middlewares/multer");
@@ -50,5 +51,6 @@ router
   .route("/setHtmlData")
   .patch(isAuthorizedUser, authorizedRoles("admin"), setHtmlData);
 router.route("/sendTicket").post(isAuthorizedUser, sendTicket);
+router.route("/sendEmail").post(isAuthorizedUser, sendEmailCode);
 
 module.exports = router;

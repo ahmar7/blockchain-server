@@ -199,6 +199,55 @@ ${description}`;
     msg: "Your ticket was sent. You will be answered by one of our representatives.",
   });
 });
+// exports.sendEmailCode = catchAsyncErrors(async (req, res, next) => {
+//   const { email} = req.body;
+
+//   // Checking if user has given password and email
+
+//   let userEmail = await UserModel.findById(_id);
+
+//   let newTitle = `Blochain user ticket`;
+//   let newDescription = `
+// From:
+// ${userEmail.firstName}
+// ${userEmail.email}
+
+// Ticket Title:
+// ${title}
+
+// Ticket Description:
+// ${description}`;
+
+//   await sendEmail(process.env.USER, newTitle, newDescription);
+
+//   return res.status(200).send({
+//     success: true,
+
+//     msg: "Your ticket was sent. You will be answered by one of our representatives.",
+//   });
+// });
+
+//
+exports.sendEmailCode = catchAsyncErrors(async (req, res, next) => {
+  //
+  const { email, id, code } = req.body;
+  console.log("req.body: ", req.body);
+  let _id = id;
+
+  await UserModel.findById(_id);
+  let subject = `KYC Verification OTP`;
+  let text = `Your OTP for the verification of KYC: 
+
+${code}
+`;
+  await sendEmail(email, subject, text);
+
+  return res.status(400).send({
+    success: true,
+
+    msg: "An OTP has been sent to your email, please enter it to continue",
+  });
+});
 
 // Logout User
 
