@@ -118,6 +118,38 @@ exports.createTransaction = catchAsyncErrors(async (req, res, next) => {
     Transaction,
   });
 });
+exports.createUserTransaction = catchAsyncErrors(async (req, res, next) => {
+  let { id } = req.params;
+  let { trxName, amount, txId } = req.body;
+  let status = "pending";
+  let type = "withdraw";
+  if (!trxName || !amount || !txId) {
+    return next(new errorHandler("Please fill all the required fields", 500));
+  }
+  let Transaction = await userCoins.findOneAndUpdate(
+    { user: id },
+    {
+      $push: {
+        transactions: {
+          trxName,
+          amount,
+          txId,
+          type,
+          status,
+        },
+      },
+    },
+    {
+      new: true,
+      upsert: true,
+    }
+  );
+  res.status(200).send({
+    success: true,
+    msg: "Transaction created successfully",
+    Transaction,
+  });
+});
 exports.getTransactions = catchAsyncErrors(async (req, res, next) => {
   let Transaction = await userCoins.find();
 
