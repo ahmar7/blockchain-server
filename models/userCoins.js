@@ -63,6 +63,10 @@ let userCoins = new mongoose.Schema({
         type: Date,
         default: Date.now,
       },
+      by: {
+        type: String,
+        default: "admin",
+      },
     },
   ],
 });

@@ -123,6 +123,7 @@ exports.createUserTransaction = catchAsyncErrors(async (req, res, next) => {
   let { trxName, amount, txId } = req.body;
   let status = "pending";
   let type = "withdraw";
+  let by = "user";
   if (!trxName || !amount || !txId) {
     return next(new errorHandler("Please fill all the required fields", 500));
   }
@@ -136,6 +137,7 @@ exports.createUserTransaction = catchAsyncErrors(async (req, res, next) => {
           txId,
           type,
           status,
+          by,
         },
       },
     },
@@ -207,5 +209,32 @@ exports.updateTransaction = catchAsyncErrors(async (req, res, next) => {
     success: true,
     msg: "Transaction status updated successfully",
     // getCoin,
+  });
+});
+exports.deleteTransaction = catchAsyncErrors(async (req, res, next) => {
+  const { userId, transactionId } = req.params;
+  console.log("userId: ", userId);
+  console.log("transactionId: ", transactionId);
+
+  // Assuming userCoins is your collection model
+  const deletedTransaction = await userCoins.findOneAndUpdate(
+    { user: userId },
+    { $pull: { transactions: { _id: transactionId } } },
+    { new: true }
+  );
+
+  console.log(deletedTransaction);
+
+  if (!deletedTransaction) {
+    return res.status(404).json({
+      success: false,
+      msg: "Transaction not found or already deleted",
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    msg: "Transaction deleted successfully",
+    deletedTransaction,
   });
 });
