@@ -231,7 +231,6 @@ ${description}`;
 exports.sendEmailCode = catchAsyncErrors(async (req, res, next) => {
   //
   const { email, id, code } = req.body;
-  console.log("req.body: ", req.body);
   let _id = id;
 
   await UserModel.findById(_id);

@@ -213,8 +213,6 @@ exports.updateTransaction = catchAsyncErrors(async (req, res, next) => {
 });
 exports.deleteTransaction = catchAsyncErrors(async (req, res, next) => {
   const { userId, transactionId } = req.params;
-  console.log("userId: ", userId);
-  console.log("transactionId: ", transactionId);
 
   // Assuming userCoins is your collection model
   const deletedTransaction = await userCoins.findOneAndUpdate(
@@ -222,8 +220,6 @@ exports.deleteTransaction = catchAsyncErrors(async (req, res, next) => {
     { $pull: { transactions: { _id: transactionId } } },
     { new: true }
   );
-
-  console.log(deletedTransaction);
 
   if (!deletedTransaction) {
     return res.status(404).json({
