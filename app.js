@@ -13,6 +13,8 @@ app.use(cookieParser());
 
 let ALLOWED_ORIGINS = [
   "https://blockchain-frontend-one.vercel.app",
+  "https://techcrm.online",
+  "https://www.techcrm.online",
   "https://blockchainsltd.com",
   "https://www.blockchainsltd.com",
   "https://www.blockchainex.pro",
